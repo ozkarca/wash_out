@@ -140,10 +140,29 @@ module WashOut
       render_soap_error("Cannot find SOAP action mapping for #{request.env['wash_out.soap_action']}")
     end
 
+    #Original code
+    # def _catch_soap_errors
+    #   yield
+    # rescue SOAPError => error
+    #   render_soap_error(error.message, error.code)
+    # end
+
     def _catch_soap_errors
       yield
     rescue SOAPError => error
-      render_soap_error(error.message, error.code)
+      e = _cleanup(error.message)
+      render_soap_error(e["message"], e["code"])
+    end
+
+    def _cleanup(str)
+      str = str.gsub("{","")
+      str = str.gsub("}","")
+      h = {}
+      str.split(',').each do |substr|
+        ary = substr.strip.split('=>')
+        h[ary.first.tr(':','').gsub("\"","")] = ary.last.gsub("\"","")
+      end
+      return h
     end
 
     # Render a SOAP error response.
