@@ -158,7 +158,7 @@ module WashOut
       str = str.gsub("{","")
       str = str.gsub("}","")
       h = {}
-      str.split(',').each do |substr|
+      str.split('",').each do |substr|
         ary = substr.strip.split('=>')
         h[ary.first.tr(':','').gsub("\"","")] = ary.last.gsub("\"","")
       end
